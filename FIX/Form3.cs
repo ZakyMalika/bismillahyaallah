@@ -164,5 +164,61 @@ namespace ucp1
                 txttahun_Prestasi.Text = row.Cells["tahun_Prestasi"].Value?.ToString();
             }
         }
+        private void btnUpdate_Click(object sender, EventArgs e)
+        {
+            // Pastikan ada data yang dipilih di DataGridView
+            if (string.IsNullOrWhiteSpace(txtid_Prestasi.Text))
+            {
+                MessageBox.Show("Harap pilih data yang akan diperbarui dari tabel.", "Peringatan", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
+
+            // Validasi form
+            if (!IsFormValid())
+            {
+                MessageBox.Show("Harap isi semua data!", "Peringatan", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
+
+            // Validasi Tahun harus berupa angka
+            if (!int.TryParse(txttahun_Prestasi.Text.Trim(), out int tahun))
+            {
+                MessageBox.Show("Tahun prestasi harus berupa angka.", "Kesalahan", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
+
+            // Proses Update ke database
+            using (SqlConnection conn = new SqlConnection(connectionString))
+            {
+                try
+                {
+                    conn.Open();
+                    string query = "UPDATE Prestasi SET Nama_Prestasi = @nama, tingkat_Prestasi = @tingkat, tahun_Prestasi = @tahun WHERE id_Prestasi = @id";
+                    using (SqlCommand cmd = new SqlCommand(query, conn))
+                    {
+                        cmd.Parameters.AddWithValue("@nama", txtNama_Prestasi.Text.Trim());
+                        cmd.Parameters.AddWithValue("@tingkat", txttingkat_Prestasi.Text.Trim());
+                        cmd.Parameters.AddWithValue("@tahun", tahun);
+                        cmd.Parameters.AddWithValue("@id", txtid_Prestasi.Text.Trim()); // ID yang digunakan untuk update
+
+                        int rows = cmd.ExecuteNonQuery();
+                        if (rows > 0)
+                        {
+                            MessageBox.Show("Data berhasil diperbarui!", "Sukses", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                            LoadData(); // Reload data setelah update
+                        }
+                        else
+                        {
+                            MessageBox.Show("Data gagal diperbarui!", "Kesalahan", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        }
+                    }
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show("Error: " + ex.Message, "Kesalahan", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }
+            }
+        }
+
     }
 }

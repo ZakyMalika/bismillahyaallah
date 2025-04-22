@@ -265,6 +265,73 @@ namespace FIX
         {
 
         }
+
+        private void label1_Click(object sender, EventArgs e)
+        {
+            // Menampilkan pesan atau teks di label saat label diklik
+            label1.Text = "Label telah diklik!";
+        }
+
+
+        private void btnUpdate_Click_1(object sender, EventArgs e)
+        {
+
+        }
+
+        private void btnDelete_Click_1(object sender, EventArgs e)
+        {
+
+        }
+
+        private void btnCreate_Click_1(object sender, EventArgs e)
+        {
+
+        }
+
+        private void txtCabor_TextChanged(object sender, EventArgs e)
+        {
+
+        }
+
+        private void label5_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void txtAngkatan_TextChanged(object sender, EventArgs e)
+        {
+
+        }
+
+        private void label4_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void txtProdi_TextChanged(object sender, EventArgs e)
+        {
+
+        }
+
+        private void label2_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void dgvMahasiswa_CellContentClick_1(object sender, DataGridViewCellEventArgs e)
+        {
+
+        }
+
+        private void txtNIM_TextChanged(object sender, EventArgs e)
+        {
+
+        }
+
+        private void Nama_Click(object sender, EventArgs e)
+        {
+
+        }
     }
 
 }

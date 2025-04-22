@@ -64,6 +64,7 @@
             this.btnUpdate.TabIndex = 2;
             this.btnUpdate.Text = "Update";
             this.btnUpdate.UseVisualStyleBackColor = false;
+            this.btnUpdate.Click += new System.EventHandler(this.btnUpdate_Click);
 
             // dgvPrestasi
             this.dgvPrestasi.BackgroundColor = System.Drawing.SystemColors.ButtonFace;
