@@ -33,15 +33,20 @@ namespace FIX
         private void LoadData()
         {
             using (SqlConnection connection = new SqlConnection(connectionString))
+            {
                 try
                 {
                     connection.Open();
-                    string query = "Select NIM, Nama , Prodi, Angkatan, " + "Cabor from Atlit";
+                    string query = "Select NIM, Nama, Prodi, Angkatan, Cabor from Atlit";
                     SqlDataAdapter da = new SqlDataAdapter(query, connection);
                     DataTable dt = new DataTable();
                     da.Fill(dt);
 
+                    // Menonaktifkan AutoGenerateColumns dan mengatur kolom secara manual
                     dgvMahasiswa.AutoGenerateColumns = true;
+
+
+                    // Mengikat data ke DataGridView
                     dgvMahasiswa.DataSource = dt;
 
                     ClearForm();
@@ -55,7 +60,9 @@ namespace FIX
                         MessageBoxIcon.Error
                     );
                 }
+            }
         }
+
 
         private void btnCreate_Click(object sender, EventArgs e)
         {
@@ -252,6 +259,11 @@ namespace FIX
         {
             // Contoh isi
             // Misal tampilkan MessageBox atau proses lain.
+        }
+
+        private void dgvMahasiswa_CellContentClick(object sender, DataGridViewCellEventArgs e)
+        {
+
         }
     }
 

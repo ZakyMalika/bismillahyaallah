@@ -5,11 +5,11 @@ using System.Windows.Forms;
 
 namespace ucp1
 {
-    public partial class Form1 : Form
+    public partial class Form2 : Form
     {
         private string connectionString = "Data Source=DESKTOP-K2MUUDE\\ZAKYMALIKA;Initial Catalog=keuangan;Integrated Security=True";
 
-        public Form1()
+        public Form2()
         {
             InitializeComponent();
         }

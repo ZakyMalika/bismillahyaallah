@@ -5,27 +5,27 @@ using System.Windows.Forms;
 
 namespace ucp1
 {
-    public partial class Form2 : Form
+    public partial class Form3 : Form
     {
         private string connectionString = "Data Source=DESKTOP-K2MUUDE\\ZAKYMALIKA;Initial Catalog=keuangan;Integrated Security=True";
 
-        public Form2()
+        public Form3()
         {
             InitializeComponent();
         }
 
-        private void Form1_Load(object sender, EventArgs e)
+        private void Form3_Load(object sender, EventArgs e)
         {
             LoadData();
         }
 
         private void ClearForm()
         {
-            txtid_Prestasi.Clear();
+            txtid_Prestasi.Clear(); // hanya untuk display
             txtNama_Prestasi.Clear();
             txttingkat_Prestasi.Clear();
             txttahun_Prestasi.Clear();
-            txtid_Prestasi.Focus();
+            txtNama_Prestasi.Focus();
         }
 
         private void LoadData()
@@ -52,26 +52,39 @@ namespace ucp1
             }
         }
 
+        private bool IsFormValid()
+        {
+            return !(string.IsNullOrWhiteSpace(txtNama_Prestasi.Text) ||
+                     string.IsNullOrWhiteSpace(txttingkat_Prestasi.Text) ||
+                     string.IsNullOrWhiteSpace(txttahun_Prestasi.Text));
+        }
+
         private void btnCreate_Click(object sender, EventArgs e)
         {
+            if (!IsFormValid())
+            {
+                MessageBox.Show("Harap isi semua data!", "Peringatan", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
+
+            if (!int.TryParse(txttahun_Prestasi.Text.Trim(), out int tahun))
+            {
+                MessageBox.Show("Tahun prestasi harus berupa angka.", "Kesalahan", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
+
             using (SqlConnection conn = new SqlConnection(connectionString))
             {
                 try
                 {
-                    if (txtid_Prestasi.Text == "" || txtNama_Prestasi.Text == "" || txttingkat_Prestasi.Text == "" || txttahun_Prestasi.Text == "")
-                    {
-                        MessageBox.Show("Harap isi semua data!", "Peringatan", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                        return;
-                    }
-
                     conn.Open();
-                    string query = "INSERT INTO Prestasi (id_Prestasi, Nama_Prestasi, tingkat_Prestasi, tahun_Prestasi) VALUES (@id, @nama, @tingkat, @tahun)";
+                    string query = "INSERT INTO Prestasi (Nama_Prestasi, tingkat_Prestasi, tahun_Prestasi) " +
+                                   "VALUES (@nama, @tingkat, @tahun)";
                     using (SqlCommand cmd = new SqlCommand(query, conn))
                     {
-                        cmd.Parameters.AddWithValue("@id", txtid_Prestasi.Text.Trim());
                         cmd.Parameters.AddWithValue("@nama", txtNama_Prestasi.Text.Trim());
                         cmd.Parameters.AddWithValue("@tingkat", txttingkat_Prestasi.Text.Trim());
-                        cmd.Parameters.AddWithValue("@tahun", txttahun_Prestasi.Text.Trim());
+                        cmd.Parameters.AddWithValue("@tahun", tahun);
 
                         int rows = cmd.ExecuteNonQuery();
                         if (rows > 0)
@@ -108,6 +121,7 @@ namespace ucp1
                             string query = "DELETE FROM Prestasi WHERE id_Prestasi = @id";
                             SqlCommand cmd = new SqlCommand(query, conn);
                             cmd.Parameters.AddWithValue("@id", id);
+
                             int rows = cmd.ExecuteNonQuery();
                             if (rows > 0)
                             {
@@ -144,16 +158,11 @@ namespace ucp1
             {
                 DataGridViewRow row = dgvPrestasi.Rows[e.RowIndex];
 
-                txtid_Prestasi.Text = row.Cells[0].Value?.ToString();
-                txtNama_Prestasi.Text = row.Cells[1].Value?.ToString();
-                txttingkat_Prestasi.Text = row.Cells[2].Value?.ToString();
-                txttahun_Prestasi.Text = row.Cells[3].Value?.ToString();
+                txtid_Prestasi.Text = row.Cells["id_Prestasi"].Value?.ToString();
+                txtNama_Prestasi.Text = row.Cells["Nama_Prestasi"].Value?.ToString();
+                txttingkat_Prestasi.Text = row.Cells["tingkat_Prestasi"].Value?.ToString();
+                txttahun_Prestasi.Text = row.Cells["tahun_Prestasi"].Value?.ToString();
             }
         }
-        private void dgvKeuangan_CellContentClick(object sender, DataGridViewCellEventArgs e)
-        {
-            // Kamu bisa isi logika di sini kalau memang perlu
-        }
-
     }
 }

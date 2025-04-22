@@ -1,6 +1,6 @@
 ﻿namespace ucp1
 {
-    partial class Form1
+    partial class Form2
     {
         private System.ComponentModel.IContainer components = null;
 
