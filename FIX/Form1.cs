@@ -8,7 +8,7 @@ namespace FIX
 {
     public partial class Form1 : Form
     {
-        private string connectionString = "Data Source=DESKTOP-K2MUUDE\\ZAKYMALIKA; initial catalog=keuangan;Integrated Security=True";
+        private string connectionString = "Data Source=DESKTOP-K2MUUDE\\ZAKYMALIKA;Initial Catalog=keuangan;Integrated Security=True";
         public Form1()
         {
             InitializeComponent();
@@ -33,20 +33,15 @@ namespace FIX
         private void LoadData()
         {
             using (SqlConnection connection = new SqlConnection(connectionString))
-            {
                 try
                 {
                     connection.Open();
-                    string query = "Select NIM, Nama, Prodi, Angkatan, Cabor from Atlit";
+                    string query = "Select NIM, Nama , Prodi, Angkatan, " + "Cabor from Atlit";
                     SqlDataAdapter da = new SqlDataAdapter(query, connection);
                     DataTable dt = new DataTable();
                     da.Fill(dt);
 
-                    // Menonaktifkan AutoGenerateColumns dan mengatur kolom secara manual
                     dgvMahasiswa.AutoGenerateColumns = true;
-
-
-                    // Mengikat data ke DataGridView
                     dgvMahasiswa.DataSource = dt;
 
                     ClearForm();
@@ -60,9 +55,7 @@ namespace FIX
                         MessageBoxIcon.Error
                     );
                 }
-            }
         }
-
 
         private void btnCreate_Click(object sender, EventArgs e)
         {
@@ -70,7 +63,7 @@ namespace FIX
             {
                 try
                 {
-                    if (txtNIM.Text == "" || txtNama.Text == "" || txtProdi.Text == "" || txtAngkatan.Text == "" || txtCabor.Text == "")
+                    if (txtNIM.Text == ""  txtNama.Text == ""  txtProdi.Text == ""  txtAngkatan.Text == ""  txtCabor.Text == "")
                     {
                         MessageBox.Show("Harap isi semua data!", "Peringatan", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                         return;
@@ -119,7 +112,7 @@ namespace FIX
             {
                 try
                 {
-                    if (txtNIM.Text == "" || txtNama.Text == "" || txtProdi.Text == "" ||
+                    if (txtNIM.Text == ""  txtNama.Text == ""  txtProdi.Text == "" ||
                         txtAngkatan.Text == "" || txtCabor.Text == "")
                     {
                         MessageBox.Show("Harap isi semua data!", "Peringatan",
@@ -259,78 +252,6 @@ namespace FIX
         {
             // Contoh isi
             // Misal tampilkan MessageBox atau proses lain.
-        }
-
-        private void dgvMahasiswa_CellContentClick(object sender, DataGridViewCellEventArgs e)
-        {
-
-        }
-
-        private void label1_Click(object sender, EventArgs e)
-        {
-            // Menampilkan pesan atau teks di label saat label diklik
-            label1.Text = "Label telah diklik!";
-        }
-
-
-        private void btnUpdate_Click_1(object sender, EventArgs e)
-        {
-
-        }
-
-        private void btnDelete_Click_1(object sender, EventArgs e)
-        {
-
-        }
-
-        private void btnCreate_Click_1(object sender, EventArgs e)
-        {
-
-        }
-
-        private void txtCabor_TextChanged(object sender, EventArgs e)
-        {
-
-        }
-
-        private void label5_Click(object sender, EventArgs e)
-        {
-
-        }
-
-        private void txtAngkatan_TextChanged(object sender, EventArgs e)
-        {
-
-        }
-
-        private void label4_Click(object sender, EventArgs e)
-        {
-
-        }
-
-        private void txtProdi_TextChanged(object sender, EventArgs e)
-        {
-
-        }
-
-        private void label2_Click(object sender, EventArgs e)
-        {
-
-        }
-
-        private void dgvMahasiswa_CellContentClick_1(object sender, DataGridViewCellEventArgs e)
-        {
-
-        }
-
-        private void txtNIM_TextChanged(object sender, EventArgs e)
-        {
-
-        }
-
-        private void Nama_Click(object sender, EventArgs e)
-        {
-
         }
     }
 
