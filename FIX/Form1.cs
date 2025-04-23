@@ -1,240 +1,146 @@
-﻿using System.Data.SqlClient;
+﻿using System;
 using System.Data;
+using System.Data.SqlClient;
 using System.Windows.Forms;
-using System;
-
 
 namespace FIX
 {
     public partial class Form1 : Form
     {
-        private string connectionString = "Data Source=DESKTOP-K2MUUDE\\ZAKYMALIKA;Initial Catalog=keuangan;Integrated Security=True";
+        private string connectionString =  "Data Source=DESKTOP-K2MUUDE\\ZAKYMALIKA;Initial Catalog=keuangan;Integrated Security=True";
+
         public Form1()
         {
             InitializeComponent();
+            LoadData();
         }
-
         private void Form1_Load(object sender, EventArgs e)
         {
-            LoadData(); // Load the form and initialize components
+            LoadData();
         }
         private void ClearForm()
         {
             txtNIM.Clear();
             txtNama.Clear();
             txtProdi.Clear();
-            txtAngkatan.Clear();
             txtCabor.Clear();
-
-            //fokus kembali kenim agar user siap memasukkan data baru
+            txtAngkatan.Clear();
             txtNIM.Focus();
         }
 
         private void LoadData()
         {
             using (SqlConnection connection = new SqlConnection(connectionString))
+            {
                 try
                 {
                     connection.Open();
-                    string query = "Select NIM, Nama , Prodi, Angkatan, " + "Cabor from Atlit";
-                    SqlDataAdapter da = new SqlDataAdapter(query, connection);
+                    string query = "SELECT NIM, Nama, Prodi, Angkatan, Cabor FROM Atlit";
+                    SqlDataAdapter adapter = new SqlDataAdapter(query, connection);
                     DataTable dt = new DataTable();
-                    da.Fill(dt);
-
+                    adapter.Fill(dt);
                     dgvMahasiswa.AutoGenerateColumns = true;
                     dgvMahasiswa.DataSource = dt;
-
-                    ClearForm();
                 }
                 catch (Exception ex)
                 {
-                    MessageBox.Show(
-                        "Error: " + ex.Message,
-                        "Kesalahan",
-                        MessageBoxButtons.OK,
-                        MessageBoxIcon.Error
-                    );
+                    MessageBox.Show("Gagal memuat data: " + ex.Message);
                 }
+                finally
+                {
+                    connection.Close();
+                }
+            }
         }
 
         private void btnCreate_Click(object sender, EventArgs e)
         {
-            using (SqlConnection conn = new SqlConnection(connectionString))
+            using (SqlConnection connection = new SqlConnection(connectionString))
             {
                 try
                 {
-                    if (txtNIM.Text == ""  txtNama.Text == ""  txtProdi.Text == ""  txtAngkatan.Text == ""  txtCabor.Text == "")
-                    {
-                        MessageBox.Show("Harap isi semua data!", "Peringatan", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                        return;
-                    }
-
-                    conn.Open();
+                    connection.Open();
                     string query = "INSERT INTO Atlit (NIM, Nama, Prodi, Angkatan, Cabor) VALUES (@NIM, @Nama, @Prodi, @Angkatan, @Cabor)";
-                    using (SqlCommand cmd = new SqlCommand(query, conn))
-                    {
-                        cmd.Parameters.AddWithValue("@NIM", txtNIM.Text.Trim());
-                        cmd.Parameters.AddWithValue("@Nama", txtNama.Text.Trim());
-                        cmd.Parameters.AddWithValue("@Prodi", txtProdi.Text.Trim());
-                        cmd.Parameters.AddWithValue("@Angkatan", txtAngkatan.Text.Trim());
-                        cmd.Parameters.AddWithValue("@Cabor", txtCabor.Text.Trim());
-
-                        int rowsAffected = cmd.ExecuteNonQuery();
-                        if (rowsAffected > 0)
-                        {
-                            MessageBox.Show("Data berhasil ditambahkan!", "Sukses", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                            LoadData();
-                            ClearForm();
-                        }
-                        else
-                        {
-                            MessageBox.Show("Data tidak berhasil ditambahkan!", "Kesalahan", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                        }
-
-                    }
+                    SqlCommand cmd = new SqlCommand(query, connection);
+                    cmd.Parameters.AddWithValue("@NIM", txtNIM.Text);
+                    cmd.Parameters.AddWithValue("@Nama", txtNama.Text);
+                    cmd.Parameters.AddWithValue("@Prodi", txtProdi.Text);
+                    cmd.Parameters.AddWithValue("@Angkatan", txtAngkatan.Text);
+                    cmd.Parameters.AddWithValue("@Cabor", txtCabor.Text);
+                    cmd.ExecuteNonQuery();
+                    MessageBox.Show("Data berhasil ditambahkan.");
+                    LoadData();
                 }
                 catch (Exception ex)
                 {
-                    MessageBox.Show("Error: " + ex.Message, "Kesalahan", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    MessageBox.Show("Gagal menambahkan data: " + ex.Message);
+                }
+                finally
+                {
+                    connection.Close();
                 }
             }
         }
 
         private void btnUpdate_Click(object sender, EventArgs e)
         {
-            if (string.IsNullOrEmpty(txtNIM.Text))
-            {
-                MessageBox.Show("Pilih data yang akan diupdate!", "Peringatan", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                return;
-            }
-
-            using (SqlConnection conn = new SqlConnection(connectionString))
+            using (SqlConnection connection = new SqlConnection(connectionString))
             {
                 try
                 {
-                    if (txtNIM.Text == ""  txtNama.Text == ""  txtProdi.Text == "" ||
-                        txtAngkatan.Text == "" || txtCabor.Text == "")
-                    {
-                        MessageBox.Show("Harap isi semua data!", "Peringatan",
-                            MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                        return;
-                    }
-
-                    conn.Open();
-                    string query = @"UPDATE Atlit 
-                           SET Nama = @Nama, 
-                               Prodi = @Prodi, 
-                               Angkatan = @Angkatan, 
-                               Cabor = @Cabor 
-                           WHERE NIM = @NIM";
-
-                    using (SqlCommand cmd = new SqlCommand(query, conn))
-                    {
-                        cmd.Parameters.AddWithValue("@NIM", txtNIM.Text.Trim());
-                        cmd.Parameters.AddWithValue("@Nama", txtNama.Text.Trim());
-                        cmd.Parameters.AddWithValue("@Prodi", txtProdi.Text.Trim());
-                        cmd.Parameters.AddWithValue("@Angkatan", txtAngkatan.Text.Trim());
-                        cmd.Parameters.AddWithValue("@Cabor", txtCabor.Text.Trim());
-
-                        int rowsAffected = cmd.ExecuteNonQuery();
-                        if (rowsAffected > 0)
-                        {
-                            MessageBox.Show("Data berhasil diupdate!", "Sukses",
-                                MessageBoxButtons.OK, MessageBoxIcon.Information);
-                            LoadData();
-                            ClearForm();
-                        }
-                        else
-                        {
-                            MessageBox.Show("Data gagal diupdate!", "Error",
-                                MessageBoxButtons.OK, MessageBoxIcon.Error);
-                        }
-                    }
+                    connection.Open();
+                    string query = "UPDATE Atlit SET Nama = @Nama, Prodi = @Prodi, Angkatan = @Angkatan, Cabor = @Cabor WHERE NIM = @NIM";
+                    SqlCommand cmd = new SqlCommand(query, connection);
+                    cmd.Parameters.AddWithValue("@NIM", txtNIM.Text);
+                    cmd.Parameters.AddWithValue("@Nama", txtNama.Text);
+                    cmd.Parameters.AddWithValue("@Prodi", txtProdi.Text);
+                    cmd.Parameters.AddWithValue("@Angkatan", txtAngkatan.Text);
+                    cmd.Parameters.AddWithValue("@Cabor", txtCabor.Text);
+                    cmd.ExecuteNonQuery();
+                    MessageBox.Show("Data berhasil diperbarui.");
+                    LoadData();
                 }
                 catch (Exception ex)
                 {
-                    MessageBox.Show("Error: " + ex.Message, "Kesalahan",
-                        MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    MessageBox.Show("Gagal memperbarui data: " + ex.Message);
+                }
+                finally
+                {
+                    connection.Close();
                 }
             }
         }
 
         private void btnDelete_Click(object sender, EventArgs e)
         {
-            if (dgvMahasiswa.SelectedRows.Count > 0)
+            using (SqlConnection connection = new SqlConnection(connectionString))
             {
-                DialogResult config = MessageBox.Show(
-                    "Yakin ingin menghapus data ini?", "Konfirmasi",
-                    MessageBoxButtons.YesNo,
-                    MessageBoxIcon.Question);
-                if (config == DialogResult.Yes)
+                try
                 {
-                    using (SqlConnection conn = new SqlConnection(connectionString))
-                    {
-
-                        try
-                        {
-                            string nim = dgvMahasiswa.SelectedRows[0].Cells["NIM"].Value.ToString();
-                            conn.Open();
-                            string query = "Delete from Atlit where NIM = @NIM";
-                            SqlCommand cmd = new SqlCommand(query, conn);
-                            cmd.Parameters.AddWithValue("@NIM", nim);
-                            int rowsAffected = cmd.ExecuteNonQuery();
-                            if (rowsAffected > 0)
-                            {
-                                MessageBox.Show(
-                                    "Data berhasil dihapus",
-                                    "Sukses",
-                                    MessageBoxButtons.OK,
-                                    MessageBoxIcon.Information
-                                );
-                                LoadData();
-                                ClearForm();
-                            }
-                            else
-                            {
-                                MessageBox.Show(
-                                    "Data gagal dihapus", "Kesalahan",
-                                    MessageBoxButtons.OK,
-                                    MessageBoxIcon.Error
-                                );
-                            }
-                        }
-                        catch (Exception ex)
-                        {
-                            MessageBox.Show(
-                                "Error: " + ex.Message,
-                                "Kesalahan",
-                                MessageBoxButtons.OK,
-                                MessageBoxIcon.Error
-                            );
-                        }
-                    }
+                    connection.Open();
+                    string query = "DELETE FROM Atlit WHERE NIM = @NIM";
+                    SqlCommand cmd = new SqlCommand(query, connection);
+                    cmd.Parameters.AddWithValue("@NIM", txtNIM.Text);
+                    cmd.ExecuteNonQuery();
+                    MessageBox.Show("Data berhasil dihapus.");
+                    LoadData();
                 }
-                else
+                catch (Exception ex)
                 {
-                    MessageBox.Show(
-                        "Harap pilih data yang akan dihapus",
-                        "Peringatan",
-                        MessageBoxButtons.OK,
-                        MessageBoxIcon.Warning
-                    );
+                    MessageBox.Show("Gagal menghapus data: " + ex.Message);
+                }
+                finally
+                {
+                    connection.Close();
                 }
             }
         }
-        private void btnRefresh_Click(object sender, EventArgs e)
-        {
-            LoadData();
 
-            MessageBox.Show($"Jumlah Kolom: {dgvMahasiswa.ColumnCount}\nJumlah Baris: {dgvMahasiswa.RowCount}",
-                "Debugging DataGridView", MessageBoxButtons.OK, MessageBoxIcon.Information);
-        }
         private void dgvMahasiswa_CellClick(object sender, DataGridViewCellEventArgs e)
         {
-            if (e.RowIndex >= 0)
+            if (e.RowIndex >= 0 && dgvMahasiswa.Rows[e.RowIndex].Cells.Count >= 5)
             {
                 DataGridViewRow row = dgvMahasiswa.Rows[e.RowIndex];
-
                 txtNIM.Text = row.Cells[0].Value?.ToString();
                 txtNama.Text = row.Cells[1].Value?.ToString();
                 txtProdi.Text = row.Cells[2].Value?.ToString();
@@ -242,17 +148,10 @@ namespace FIX
                 txtCabor.Text = row.Cells[4].Value?.ToString();
             }
         }
-        private void textBox2_TextChanged(object sender, EventArgs e)
-        {
-            // Contoh isi
-            // Misal update label atau validasi input.
-        }
 
-        private void label3_Click(object sender, EventArgs e)
+        private void Nama_Click(object sender, EventArgs e)
         {
-            // Contoh isi
-            // Misal tampilkan MessageBox atau proses lain.
+
         }
     }
-
 }
